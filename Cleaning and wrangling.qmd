@@ -1,0 +1,141 @@
+---
+title: "Cleaning and wrangling"
+format: html
+---
+# Setup
+```{r}
+library(dplyr)
+library(tidyr)
+library(readr)
+```
+
+
+# Data Sources
+
+## Read in data
+```{r}
+catch_original <- read_csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1")
+```
+
+## Exploring data
+```{r}
+colnames(catch_original)
+head(catch_original)
+summary(catch_original)
+unique(catch_original$Region)
+```
+
+# Clean and Reshape data
+
+```{r}
+catch_selected <- catch_original %>%
+  filter(Year>1900) %>%
+  select(Year)
+```
+
+## Using `select()` function
+```{r}
+catch_data <- catch_original %>% 
+  select (Region, Year, Chinook)
+```
+
+## Remove columns
+```{r}
+catch_data <- catch_original %>% 
+  select(-All, -notesRegCode)
+```
+
+## Check column types
+```{r}
+dplyr::glimpse(catch_data)
+
+catch_clean <- catch_data %>% 
+  mutate(Chinook = as.numeric(Chinook))
+```
+```{r}
+i <- which (is.na(catch_clean$Chinook))
+```
+```{r}
+catch_data[i,] # [x,y]. x = rows, y = columns
+```
+## Replace I with 1
+```{r}
+catch_clean <- catch_data %>% 
+  mutate(Chinook = if_else(condition = Chinook == "I",
+                           true = "1",
+                           false = Chinook),
+         Chinook = as.numeric(Chinook))
+```
+
+## Reshape data
+```{r}
+catch_long <- catch_clean %>% 
+  pivot_longer(
+    cols = -c(Region,Year),
+    names_to = "Species",
+    values_to = "Catch"
+  )
+```
+
+## Renaming columns `rename()`
+```{r}
+catch_long <- catch_long %>%
+  # new name = old name
+  # rename(catch_thousands = Catch) %>% 
+  mutate(Catch_thousands = Catch * 1000)
+```
+
+## Summary stats using `group_by()`
+```{r}
+mean_region <- catch_long %>% 
+  group_by(Region) %>% 
+  summarize(mean_catch = mean(Catch_thousands))
+```
+```{r}
+count_region <- catch_long %>% 
+  group_by(Region) %>% 
+  summarize(count = n())
+```
+
+## Filtering rows using `filter()`
+```{r}
+sse_catch <- catch_long %>% 
+  filter(Region == "SSE")
+```
+## Sort data using `arrange()`
+```{r}
+mean_region <- mean_region %>% 
+  arrange(desc(mean_catch)) %>% 
+  filter(Region %in% c("BRB","NSE","SSE")) # if we want to filter certain observations
+```
+
+## Split values in columns using `seperate()` and `unite()`
+```{r}
+# create dummy df
+sites_df <- data.frame(site = c("HAW-101",
+                                "HAW-103",
+                                "OAH-320",
+                                "OAH-219",
+                                "MAU-039"))
+sites_df %>% 
+  separate(site, c("island","site_number"),
+           sep = "-")
+```
+
+```{r}
+dates_df <- data.frame(
+    year = c("1930",
+             "1930",
+             "1930"),
+    month = c("12",
+              "12",
+              "12"),
+    day = c("14",
+            "15",
+            "16")
+)
+
+dates_df %>%
+    unite(date, year, month, day, sep = "/")
+```
+
