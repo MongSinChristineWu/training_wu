@@ -1,0 +1,43 @@
+---
+title: "intro-to-Quarto"
+format: html
+bibliography: references.bib
+---
+
+# This is a header level 1
+
+## Header level 2
+
+### Header level 3
+
+**This is bold text**<br> *This is italic*
+
+<br>
+
+Write just plain text line 2
+
+-   Item 1
+-   Item 2
+    -   item 2a
+    -   item 2b
+
+### Adding CItations
+
+This is very important[@oke2020]
+
+### Inserting tables
+
+| Pollutants                                                                                                                                                   | Level                                                         | Col3                                                                            |
+|-----------------------------------|-------------------|-------------------|
+| pollutant 12345667 884806u4u1243 45hgjfd ghs;gj;hndglsj gad;igheobgkvn;lkf joiafh;n blakfjaoeifh akbnlak fjao;ifaisodfjai ohgd knbaifjopie whfgoan b;aoifhwe | high low abnkfjoia sdfhjasoigha sfafjasn; asfjsgn; sadfnlakgn | ajf;odng afosiag asgho agdjnog;i ags oigo;sg asghos;g ag o;hgoa;sfg ;gonao;g ag |
+| 2                                                                                                                                                            | low                                                           |                                                                                 |
+| 3                                                                                                                                                            |                                                               |                                                                                 |
+
+: table 1
+
+```{r}
+4+4
+x <- 4*4
+x
+vector <- c(3,4,5)
+```
