@@ -1,0 +1,10 @@
+---
+title: "Intro to Data Visualization"
+format: html
+---
+
+## Set up
+```{r}
+
+```
+
